@@ -178,7 +178,7 @@ export default function (ctx: IPluginContext, options: IOptions) {
                 }
 
                 (opts.compiler.vitePlugins as Plugin[]).push({
-                    name: 'react-devtools',
+                    name: 'taro-plugin-vite-react-devtools',
                     config: {
                         handler(config) {
                             if (process.env.TARO_ENV !== 'h5') {
@@ -201,7 +201,7 @@ export default function (ctx: IPluginContext, options: IOptions) {
                                                         if (id === injectedRuntimePath
                                                             || id === injectedSocketPath
                                                         ) {
-                                                            console.log('plugin files, ', id);
+                                                            // console.log('plugin files, ', id);
                                                             return 'taro';
                                                         }
     
@@ -226,7 +226,7 @@ export default function (ctx: IPluginContext, options: IOptions) {
                             }
 
                             if (/\/react\-devtools\-core(\/dist\/|_)backend\.js($|\?)/.test(id)) {
-                                console.log('\nbackid', id,);
+                                // console.log('\nbackid', id,);
                                 return transformReactDevtoolsBackend(code);
                             }
                         }

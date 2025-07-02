@@ -30,12 +30,12 @@ const getGlobalApi = () => {
 export default class CustomSocket {
     url: string
     readyState: number
-    declare onclose: (res: any) => void
-    declare onerror: (res: any) => void
-    declare onmessage: (res: any) => void
-    declare onopen: (res: any) => void
+    onclose: ((res: any) => void)  | undefined = undefined;
+    onerror: ((res: any) => void)  | undefined = undefined;
+    onmessage: ((res: any) => void)  | undefined = undefined;
+    onopen: ((res: any) => void)  | undefined = undefined;
 
-    private _ws: any
+    _ws: any = undefined;
 
     constructor(url: string) {
         this.url = url
@@ -57,13 +57,13 @@ export default class CustomSocket {
 
                 ws.onClose((res: any) => {
                     this.readyState = this.CLOSED
-                    this.onclose(res)
+                    this.onclose?.(res)
                 })
 
                 ws.onError((res: any) => {
                     console.log('WebSocket error:', res);
                     this.readyState = this.CLOSED
-                    this.onerror(res)
+                    this.onerror?.(res)
                 })
 
                 ws.onMessage((res: any) => {
@@ -78,11 +78,11 @@ export default class CustomSocket {
                 if (this.readyState !== this.OPEN) {
                     ws.onOpen((res: any) => {
                         this.readyState = this.OPEN
-                        this.onopen(res)
+                        this.onopen?.(res)
                     })
                 } else {
                     // 支付宝全局的 onSocketOpen 已触发过了，直接调用 onopen
-                    this.onopen({})
+                    this.onopen?.({})
                 }
             })
         // 支付宝只支持一个 socket 连接，且 onSocketOpen 的触发时机比 connectSocket 回调的时机早
@@ -93,14 +93,14 @@ export default class CustomSocket {
         }
     }
 
-    public send(data: string | ArrayBuffer) {
+    send(data: string | ArrayBuffer) {
         console.log('send WebSocket message:', data);
         this._ws.send({
             data
         })
     }
 
-    public close(code: number, reason: string) {
+    close(code: number, reason: string) {
         this.readyState = this.CLOSING
         this._ws.close({
             code: code || 1000,
